@@ -1,0 +1,140 @@
+﻿<Window x:Class="SmartCreate.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="CreateForge - SmartCreate" 
+        Height="800" 
+        Width="1400"
+        x:ClassModifier="public">
+    
+    <!-- Main layout: Toolbar + 70/30 Preview/Chat split -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Toolbar -->
+            <RowDefinition Height="*"/>    <!-- Content -->
+        </Grid.RowDefinitions>
+        
+        <!-- Toolbar: Project type selector + New Project -->
+        <StackPanel Grid.Row="0" 
+                    Orientation="Horizontal" 
+                    Background="#2D2D30" 
+                    Height="40">
+            <ComboBox Width="150" Margin="10,0" SelectedIndex="0">
+                <ComboBoxItem Content="Website"/>
+                <ComboBoxItem Content="Android"/>
+            </ComboBox>
+            <Button Content="New Project" Margin="10,0" Padding="10,5"/>
+        </StackPanel>
+        
+        <!-- 70% Preview | 30% Chat | Splitter -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70*"/> <!-- Preview Pane -->
+                <ColumnDefinition Width="30*"/> <!-- Chat Pane -->
+                <ColumnDefinition Width="5"/>   <!-- Resizable Splitter -->
+            </Grid.ColumnDefinitions>
+            
+            <!-- Preview Pane: WebView2 for live code preview -->
+            <Border Grid.Column="0" 
+                    Background="#1E1E1E" 
+                    BorderBrush="#404040" 
+                    BorderThickness="1">
+                <wv2:WebView2 x:Name="PreviewWebView2"/>
+            </Border>
+            
+            <!-- Chat Pane: AI conversation + input -->
+            <Border Grid.Column="1" 
+                    Background="#252525" 
+                    BorderBrush="#404040" 
+                    BorderThickness="1">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>  <!-- Message History -->
+                        <RowDefinition Height="Auto"/> <!-- Input Row -->
+                    </Grid.RowDefinitions>
+                    
+                    <!-- Chat History: Scrollable message list -->
+                    <ScrollViewer x:Name="ChatScrollViewer" 
+                                Grid.Row="0" 
+                                VerticalScrollBarVisibility="Auto" 
+                                HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl x:Name="MessagesList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <!-- Sender label (AI/You) -->
+                                        <TextBlock Grid.Column="0" 
+                                                 Text="{Binding Sender}" 
+                                                 Foreground="{Binding ForegroundColor}"
+                                                 FontSize="11" 
+                                                 FontWeight="SemiBold"
+                                                 Margin="0,0,0,2"/>
+                                        
+                                        <!-- Message bubble with dynamic colors -->
+                                        <TextBlock Grid.Column="0" 
+                                                 Text="{Binding MessageText}" 
+                                                 Foreground="White"
+                                                 FontSize="13"
+                                                 TextWrapping="Wrap"
+                                                 Margin="8,0,8,8"
+                                                 Background="{Binding BackgroundColor}"
+                                                 Padding="10,8"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                    
+                    <!-- Full-width input + Send button -->
+                    <Grid Grid.Row="1" Margin="0,10,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>     <!-- Expands to fill -->
+                            <ColumnDefinition Width="Auto"/>  <!-- Fixed button -->
+                        </Grid.ColumnDefinitions>
+                        
+                        <!-- AI-aware input field -->
+                        <TextBox x:Name="ChatInput" 
+                                 Grid.Column="0"
+                                 Height="48" 
+                                 MinHeight="48"
+                                 VerticalContentAlignment="Center" 
+                                 FontSize="14" 
+                                 Padding="12,8" 
+                                 VerticalAlignment="Center"
+                                 AcceptsReturn="False"
+                                 KeyDown="ChatInput_KeyDown"
+                                 Margin="0,0,5,0"
+                                 Background="#3C3C3C"
+                                 Foreground="White"
+                                 BorderBrush="#606060"
+                                 BorderThickness="1,1,0,1"
+                                 CaretBrush="LimeGreen"/>
+                        
+                        <!-- Send action button -->
+                        <Button x:Name="SendButton" 
+                                Grid.Column="1"
+                                Content="Send →" 
+                                Width="90" 
+                                Height="48"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Background="#0E639C"
+                                BorderThickness="0"
+                                Click="SendButton_Click"/>
+                    </Grid>
+                </Grid>
+            </Border>
+            
+            <!-- Resizable splitter -->
+            <GridSplitter Grid.Column="2" 
+                         Width="5" 
+                         Background="#404040" 
+                         HorizontalAlignment="Stretch" 
+                         VerticalAlignment="Stretch"/>
+        </Grid>
+    </Grid>
+</Window>
